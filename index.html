@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
 <head>
@@ -56,8 +57,8 @@
       radial-gradient(1200px 600px at 50% -10%, #f7d6e9 0%, transparent 60%),
       #dfe0e6;
     color:var(--ink);
-    display:flex; flex-direction:column; align-items:center;
-    padding:34px 16px 40px; min-height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100dvh; padding:24px 16px; gap:18px;
   }
   [data-theme="dark"] body{
     background:radial-gradient(1200px 600px at 50% -10%, #2a0016 0%, transparent 60%), #0b0b0c;
@@ -65,10 +66,29 @@
 
   /* ================= iPhone frame ================= */
   .phone{
-    width:390px; max-width:100%; height:844px; position:relative;
-    background:var(--bg); border-radius:54px;
-    box-shadow:0 0 0 12px #1b1b1d, 0 0 0 14px #2c2c2e, 0 30px 60px rgba(0,0,0,.45);
-    overflow:hidden;
+    position:relative; width:392px; height:844px; max-width:100%;
+    background:#000; border-radius:56px; padding:13px; flex:0 0 auto;
+    box-shadow:
+      0 0 0 2px #1b1b1d,
+      0 0 0 6px #2a2a2c,
+      0 0 0 7px #0a0a0b,
+      0 40px 80px -20px rgba(0,0,0,.65),
+      inset 0 0 6px rgba(255,255,255,.08);
+  }
+  /* side buttons */
+  .phone::before{
+    content:"";position:absolute;left:-3px;top:172px;width:3px;height:34px;
+    border-radius:3px 0 0 3px;background:linear-gradient(#3a3a3c,#1a1a1c);
+    box-shadow:0 60px 0 #1a1a1c, 0 116px 0 #1a1a1c;
+  }
+  .phone::after{
+    content:"";position:absolute;right:-3px;top:212px;width:3px;height:64px;
+    border-radius:0 3px 3px 0;background:linear-gradient(#3a3a3c,#1a1a1c);
+  }
+  /* inner glass — content clips to this */
+  .device-screen{
+    position:relative; width:100%; height:100%;
+    background:var(--bg); border-radius:44px; overflow:hidden;
   }
   .island{
     position:absolute; top:11px; left:50%; transform:translateX(-50%);
@@ -293,6 +313,7 @@
 <body>
 
   <div class="phone" id="phone">
+    <div class="device-screen">
     <div class="island"></div>
     <div class="statusbar">
       <span id="clock">9:41</span>
@@ -510,6 +531,7 @@
     <div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span id="toast-msg">+50 Punkte gutgeschrieben</span></div>
 
     <div class="home-ind"></div>
+    </div>
   </div>
 
   <!-- ================= DEMO CONTROLS ================= -->
@@ -554,9 +576,9 @@
      Called from OptanonWrapper() in the head. */
   window.placeOneTrustInPhone = function(){
     var b=document.getElementById('onetrust-banner-sdk');
-    var phone=document.getElementById('phone');
-    if(b && phone && b.parentNode!==phone){
-      phone.appendChild(b);
+    var host=document.querySelector('#phone .device-screen') || document.getElementById('phone');
+    if(b && host && b.parentNode!==host){
+      host.appendChild(b);
       b.style.position='absolute'; b.style.left='12px'; b.style.right='12px';
       b.style.bottom='16px'; b.style.width='auto'; b.style.zIndex='120';
     }
@@ -632,5 +654,3 @@
 </script>
 </body>
 </html>
-OneTrust.com 
-Pl. Pablo Ruiz Picasso 11, 28020 Madrid, Spain 
