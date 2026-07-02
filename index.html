@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<!-- =================================================================================
+     ONETRUST — COOKIE BANNER (CMP)  ·  the ONE surface we will link to OneTrust.
+     ---------------------------------------------------------------------------------
+     When the UI is signed off, do TWO things:
+       1) Uncomment the otSDKStub script below and set data-domain-script to the
+          Telekom domain ID from the OneTrust admin.
+       2) Delete the demo banner block in the markup (search: "DEMO COOKIE BANNER").
+     OptanonWrapper() already calls placeOneTrustInPhone() so the real banner renders
+     INSIDE the iPhone frame instead of across the whole browser window.
+
+     NOTE: the rewards consent popup is intentionally NOT OneTrust — it's a plain
+     in-app modal for the loyalty/video use case.
+     =================================================================================
+
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"
+        type="text/javascript" charset="UTF-8"
+        data-domain-script="REPLACE-WITH-TELEKOM-DOMAIN-ID"></script>
+<script type="text/javascript">
+  function OptanonWrapper() { if (window.placeOneTrustInPhone) window.placeOneTrustInPhone(); }
+</script>
+-->
+
+<title>Mein Telekom — Mockup</title>
+<style>
+  :root{
+    /* ---- Telekom brand tokens ---- */
+    --magenta:#E20074;        /* Telekom Magenta — the one dominant accent */
+    --magenta-deep:#B3005C;   /* pressed / gradient depth */
+    --magenta-tint:#FBE6F1;   /* soft fill for reward chips */
+    --ink:#1A1A1A;            /* near-black text */
+    --sub:#6B6B70;            /* secondary text */
+    --line:#E5E5EA;           /* hairlines */
+    --card:#FFFFFF;
+    --bg:#F2F2F7;             /* iOS system grey */
+    --green:#1A9D6E;          /* earned / granted */
+    --radius:20px;
+    --tap:#00000000;
+  }
+  [data-theme="dark"]{
+    --ink:#F5F5F7; --sub:#9A9AA0; --line:#2A2A2C; --card:#1C1C1E; --bg:#000000;
+    --magenta-tint:#3A0020;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:var(--tap);}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    /* Telekom's brand face is TeleNeo — swap the stack above when licensed. */
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #f7d6e9 0%, transparent 60%),
+      #dfe0e6;
+    color:var(--ink);
+    display:flex; flex-direction:column; align-items:center;
+    padding:34px 16px 40px; min-height:100%;
+  }
+  [data-theme="dark"] body{
+    background:radial-gradient(1200px 600px at 50% -10%, #2a0016 0%, transparent 60%), #0b0b0c;
+  }
+
+  /* ================= iPhone frame ================= */
+  .phone{
+    width:390px; max-width:100%; height:844px; position:relative;
+    background:var(--bg); border-radius:54px;
+    box-shadow:0 0 0 12px #1b1b1d, 0 0 0 14px #2c2c2e, 0 30px 60px rgba(0,0,0,.45);
+    overflow:hidden;
+  }
+  .island{
+    position:absolute; top:11px; left:50%; transform:translateX(-50%);
+    width:126px; height:36px; background:#000; border-radius:20px; z-index:60;
+  }
+  .statusbar{
+    position:absolute; top:0; left:0; right:0; height:54px; z-index:55;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 30px 0; font-size:15px; font-weight:600; color:var(--ink);
+    pointer-events:none;
+  }
+  .statusbar .icons{display:flex; gap:6px; align-items:center;}
+  .statusbar svg{display:block;}
+
+  .screen{position:absolute; inset:0; padding-top:54px; display:none; flex-direction:column;}
+  .screen.active{display:flex;}
+  .scroll{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;}
+  .scroll::-webkit-scrollbar{display:none;}
+
+  .home-ind{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    width:140px; height:5px; border-radius:3px; background:var(--ink); opacity:.85; z-index:70;
+  }
+
+  /* ================= Logo ================= */
+  /* Stand-in Telekom mark: magenta "T" + digit squares. Replace with the
+     official approved SVG from Telekom's brand portal for the live deliverable. */
+  .logo{display:inline-flex; align-items:center; gap:2px;}
+  .logo .sq{width:9px; height:9px; background:var(--magenta); border-radius:1px;}
+  .logo .t{font-weight:800; color:var(--magenta); font-size:26px; line-height:1;
+           letter-spacing:-1px; margin:0 1px;}
+  .logo.big .t{font-size:40px;} .logo.big .sq{width:13px;height:13px;}
+
+  /* ================= Entry screen ================= */
+  #screen-entry .scroll{display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding:28px 28px 30px;}
+  .brandrow{display:flex; align-items:center; gap:9px;}
+  .brandrow .word{font-weight:800; font-size:19px; letter-spacing:-.4px;}
+  .entry-hero{flex:1; display:flex; flex-direction:column; align-items:center;
+    justify-content:center;}
+  .entry-hero .heart{
+    width:100px; height:100px; margin:0 0 26px; border-radius:30px;
+    background:linear-gradient(150deg,var(--magenta),var(--magenta-deep));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 18px 42px rgba(226,0,116,.4);
+  }
+  .entry-hero h1{font-size:28px; line-height:1.22; margin:0 0 14px; letter-spacing:-.5px;}
+  .entry-hero p{color:var(--sub); font-size:15px; line-height:1.55; margin:0 18px;}
+  .entry-actions{width:100%; display:flex; flex-direction:column; gap:12px;}
+  .btn{border:none; border-radius:15px; font-size:17px; font-weight:600;
+    padding:16px; cursor:pointer; font-family:inherit; transition:transform .12s, filter .12s;}
+  .btn:active{transform:scale(.98);}
+  .btn-primary{background:var(--magenta); color:#fff;}
+  .btn-primary:active{filter:brightness(.94);}
+  .btn-ghost{background:transparent; color:var(--magenta); font-weight:600;
+    border:1.5px solid var(--magenta);}
+  .entry-legal{font-size:11px; color:var(--sub); margin-top:16px; line-height:1.5;}
+  .entry-legal a{color:var(--magenta); text-decoration:none;}
+
+  /* ================= Home ================= */
+  .topbar{padding:6px 20px 12px; display:flex; align-items:center; justify-content:space-between;}
+  .topbar .greet{font-size:13px; color:var(--sub);}
+  .topbar .greet b{display:block; font-size:20px; color:var(--ink); font-weight:700; letter-spacing:-.3px;}
+  .avatar{width:38px; height:38px; border-radius:50%; background:var(--magenta-tint);
+    color:var(--magenta); font-weight:700; display:flex; align-items:center; justify-content:center; font-size:14px;}
+
+  .points-card{
+    margin:4px 16px 8px; border-radius:var(--radius); padding:20px 22px; color:#fff;
+    background:linear-gradient(135deg,var(--magenta) 0%,var(--magenta-deep) 100%);
+    box-shadow:0 14px 34px rgba(226,0,116,.32); position:relative; overflow:hidden;
+  }
+  .points-card .label{font-size:13px; opacity:.9; display:flex; align-items:center; gap:6px;}
+  .points-card .val{font-size:44px; font-weight:800; letter-spacing:-1px; margin-top:2px;}
+  .points-card .val small{font-size:16px; font-weight:600; opacity:.85; margin-left:4px;}
+  .points-card .foot{font-size:12px; opacity:.85; margin-top:6px;}
+  .points-card .ring{position:absolute; right:-40px; top:-40px; width:150px; height:150px;
+    border-radius:50%; background:rgba(255,255,255,.12);}
+
+  .section-h{display:flex; align-items:center; justify-content:space-between;
+    padding:20px 20px 10px;}
+  .section-h h2{font-size:20px; margin:0; letter-spacing:-.3px; display:flex; align-items:center; gap:7px;}
+  .section-h .heart-ic{color:var(--magenta);}
+  .section-h a{color:var(--magenta); font-size:14px; text-decoration:none; font-weight:600;}
+
+  .vlist{display:flex; flex-direction:column; gap:14px; padding:0 16px 26px;}
+  .vcard{background:var(--card); border-radius:var(--radius); overflow:hidden;
+    box-shadow:0 4px 18px rgba(0,0,0,.06); border:1px solid var(--line);}
+  .vthumb{height:150px; position:relative; display:flex; align-items:flex-end; padding:12px;
+    background-size:cover; background-position:center;}
+  .vthumb.a{background:linear-gradient(135deg,#8e2de2,#e20074);}
+  .vthumb.b{background:linear-gradient(135deg,#0077C8,#00c2a8);}
+  .vthumb.c{background:linear-gradient(135deg,#ff6a3d,#e20074);}
+  .vthumb .play{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.92);
+    display:flex; align-items:center; justify-content:center;}
+  .vthumb .dur{background:rgba(0,0,0,.55); color:#fff; font-size:11px; font-weight:600;
+    padding:3px 8px; border-radius:6px;}
+  .vbody{padding:14px 16px 16px;}
+  .vbody h3{margin:0 0 3px; font-size:16px; letter-spacing:-.2px;}
+  .vbody p{margin:0 0 13px; font-size:13px; color:var(--sub); line-height:1.45;}
+  .vrow{display:flex; align-items:center; justify-content:space-between;}
+  .chip{display:inline-flex; align-items:center; gap:5px; background:var(--magenta-tint);
+    color:var(--magenta); font-weight:700; font-size:13px; padding:6px 11px; border-radius:20px;}
+  .chip.done{background:rgba(26,157,110,.12); color:var(--green);}
+  .earn{background:var(--magenta); color:#fff; border:none; border-radius:12px;
+    padding:10px 16px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;}
+  .earn:active{filter:brightness(.94);}
+  .earn:disabled{background:var(--line); color:var(--sub); cursor:default; filter:none;}
+
+  /* ================= Preference center ================= */
+  .pc-head{padding:8px 20px 4px; display:flex; align-items:center; gap:12px;}
+  .backbtn{background:none; border:none; color:var(--magenta); font-size:16px; font-weight:600;
+    cursor:pointer; font-family:inherit; padding:6px 0; display:flex; align-items:center; gap:3px;}
+  .pc-title{padding:4px 20px 4px;}
+  .pc-title h1{font-size:26px; margin:0 0 4px; letter-spacing:-.5px;}
+  .pc-title p{margin:0; color:var(--sub); font-size:13px; line-height:1.5;}
+  .pc-group{margin:18px 16px 0;}
+  .pc-group .cap{font-size:12px; text-transform:uppercase; letter-spacing:.5px;
+    color:var(--sub); font-weight:700; padding:0 6px 8px;}
+  .pc-list{background:var(--card); border-radius:16px; overflow:hidden; border:1px solid var(--line);}
+  .pc-item{display:flex; align-items:center; justify-content:space-between; padding:14px 16px;
+    border-bottom:1px solid var(--line);}
+  .pc-item:last-child{border-bottom:none;}
+  .pc-item .txt{padding-right:14px;}
+  .pc-item .txt b{font-size:15px; font-weight:600; display:block;}
+  .pc-item .txt span{font-size:12px; color:var(--sub); line-height:1.4; display:block; margin-top:2px;}
+  .pc-item.locked .txt b{color:var(--sub);}
+
+  /* iOS toggle */
+  .sw{appearance:none; width:51px; height:31px; border-radius:16px; background:var(--line);
+    position:relative; cursor:pointer; flex:0 0 auto; transition:background .2s;}
+  .sw::after{content:""; position:absolute; top:2px; left:2px; width:27px; height:27px;
+    border-radius:50%; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,.25); transition:transform .2s;}
+  .sw:checked{background:var(--green);}
+  .sw:checked::after{transform:translateX(20px);}
+  .sw:disabled{opacity:.5; cursor:default;}
+
+  .pc-embed{margin:18px 16px 0; border:1.5px dashed var(--magenta); border-radius:14px;
+    padding:14px 16px; background:var(--magenta-tint);}
+  .pc-embed b{color:var(--magenta); font-size:13px;}
+  .pc-embed p{margin:4px 0 0; font-size:12px; color:var(--sub); line-height:1.5;}
+  .pc-save{margin:20px 16px 30px;}
+
+  /* ================= Tab bar ================= */
+  .tabbar{position:absolute; bottom:0; left:0; right:0; height:84px; z-index:40;
+    background:color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-top:1px solid var(--line); display:flex; padding:8px 6px 0;}
+  .tabbar.hidden{display:none;}
+  .tab{flex:1; border:none; background:none; cursor:pointer; font-family:inherit;
+    display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--sub);
+    font-size:10px; font-weight:600; padding-top:4px;}
+  .tab.on{color:var(--magenta);}
+  .tab svg{width:26px; height:26px;}
+
+  /* ================= Cookie banner (DEMO) ================= */
+  .cookie{position:absolute; left:12px; right:12px; bottom:16px; z-index:120;
+    background:var(--card); border-radius:22px; padding:20px; border:1px solid var(--line);
+    box-shadow:0 20px 50px rgba(0,0,0,.28); transform:translateY(140%); transition:transform .45s cubic-bezier(.22,1,.36,1);}
+  .cookie.show{transform:translateY(0);}
+  .cookie h4{margin:0 0 8px; font-size:17px; letter-spacing:-.2px; display:flex; align-items:center; gap:8px;}
+  .cookie p{margin:0 0 16px; font-size:13px; color:var(--sub); line-height:1.5;}
+  .cookie p a{color:var(--magenta); text-decoration:none;}
+  .ot-row{display:flex; gap:10px;}
+  .ot-row .btn{flex:1; padding:13px; font-size:15px; border-radius:12px;}
+  .cookie .settings{width:100%; margin-top:10px; background:none; border:none;
+    color:var(--magenta); font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; padding:6px;}
+
+  /* ================= Rewards consent popup (DEMO, not OneTrust) ================= */
+  .scrim{position:absolute; inset:0; background:rgba(0,0,0,.4); z-index:110;
+    opacity:0; pointer-events:none; transition:opacity .3s;}
+  .scrim.show{opacity:1; pointer-events:auto;}
+  .sheet{position:absolute; left:0; right:0; bottom:0; z-index:115;
+    background:var(--card); border-radius:26px 26px 0 0; padding:26px 22px calc(22px + env(safe-area-inset-bottom));
+    transform:translateY(110%); transition:transform .42s cubic-bezier(.22,1,.36,1);}
+  .sheet.show{transform:translateY(0);}
+  .sheet .grip{width:38px; height:5px; border-radius:3px; background:var(--line);
+    margin:0 auto 18px;}
+  .sheet .ic{width:60px; height:60px; border-radius:18px; background:var(--magenta-tint);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 14px;}
+  .sheet h3{text-align:center; margin:0 0 8px; font-size:20px; letter-spacing:-.3px;}
+  .sheet .lead{text-align:center; margin:0 0 18px; font-size:14px; color:var(--sub); line-height:1.5;}
+  .consent-line{display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-top:1px solid var(--line);}
+  .consent-line:last-of-type{border-bottom:1px solid var(--line); margin-bottom:20px;}
+  .consent-line .cbx{margin-top:2px; width:22px; height:22px; accent-color:var(--magenta); flex:0 0 auto;}
+  .consent-line label{font-size:13px; color:var(--ink); line-height:1.5;}
+  .consent-line label b{display:block; font-weight:600; margin-bottom:1px;}
+  .sheet .acts{display:flex; flex-direction:column; gap:10px;}
+  .sheet .mini{text-align:center; font-size:11px; color:var(--sub); margin-top:12px; line-height:1.5;}
+
+  /* video "player" */
+  .player{position:absolute; inset:0; background:#000; z-index:118; display:none;
+    flex-direction:column; align-items:center; justify-content:center; color:#fff;}
+  .player.show{display:flex;}
+  .player .bar{width:70%; height:4px; border-radius:2px; background:rgba(255,255,255,.25); margin-top:20px; overflow:hidden;}
+  .player .bar i{display:block; height:100%; width:0; background:var(--magenta);}
+  .player .pico{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.14);
+    display:flex;align-items:center;justify-content:center;}
+
+  /* toast */
+  .toast{position:absolute; top:64px; left:50%; transform:translateX(-50%) translateY(-20px);
+    background:var(--green); color:#fff; font-size:14px; font-weight:600; padding:11px 18px;
+    border-radius:14px; z-index:130; opacity:0; transition:all .3s; box-shadow:0 10px 24px rgba(0,0,0,.25);
+    display:flex; align-items:center; gap:8px; white-space:nowrap;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ================= Demo controls (outside phone) ================= */
+  .controls{margin-top:26px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  .seg{display:inline-flex; background:rgba(120,120,128,.16); border-radius:11px; padding:3px;}
+  .seg button{border:none; background:none; padding:7px 15px; border-radius:9px; font-size:13px;
+    font-weight:600; color:#3a3a3c; cursor:pointer; font-family:inherit;}
+  .seg button.on{background:#fff; color:var(--magenta); box-shadow:0 1px 3px rgba(0,0,0,.15);}
+  .ctl-btn{border:none; background:rgba(120,120,128,.16); color:#3a3a3c; border-radius:11px;
+    padding:9px 15px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;}
+  .hint{margin-top:12px; font-size:12px; color:#5a5a5f; max-width:390px; text-align:center; line-height:1.5;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="phone" id="phone">
+    <div class="island"></div>
+    <div class="statusbar">
+      <span id="clock">9:41</span>
+      <span class="icons">
+        <!-- signal -->
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <!-- wifi -->
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.6 0 5 1 6.8 2.7l1.3-1.4C14.4 1.4 11.6.2 8.5.2S2.6 1.4.4 3.5l1.3 1.4C3.5 3.2 5.9 2.2 8.5 2.2z"/><path d="M8.5 6c1.4 0 2.7.5 3.7 1.5l1.3-1.4C12 4.8 10.3 4 8.5 4S5 4.8 3.5 6.1l1.3 1.4C5.8 6.5 7.1 6 8.5 6z"/><path d="M8.5 9.8L10.6 7.6C10.1 7 9.3 6.6 8.5 6.6s-1.6.4-2.1 1z"/></svg>
+        <!-- battery -->
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="1" y="1" width="22" height="11" rx="3" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="19" height="8" rx="1.8" fill="currentColor"/><rect x="24.5" y="4.5" width="1.8" height="4" rx=".9" fill="currentColor" opacity=".4"/></svg>
+      </span>
+    </div>
+
+    <!-- ============================ ENTRY ============================ -->
+    <section class="screen active" id="screen-entry">
+      <div class="scroll">
+        <div class="brandrow">
+          <!-- LOGO STAND-IN — replace with official Telekom SVG -->
+          <span class="logo"><span class="sq"></span><span class="t">T</span><span class="sq"></span></span>
+          <span class="word">Mein Telekom</span>
+        </div>
+
+        <div class="entry-hero">
+          <div class="heart">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="#fff"><path d="M12 21s-8-4.9-8-10.6C4 6.9 6.4 5 9 5c1.7 0 3 .9 3 2 0-1.1 1.3-2 3-2 2.6 0 5 1.9 5 5.4C20 16.1 12 21 12 21z"/></svg>
+          </div>
+          <h1>Willkommen bei<br>Mein Telekom</h1>
+          <p>Tarife verwalten, Störungen prüfen und mit <b>Magenta Moments</b> Prämien sammeln — Videos ansehen, Punkte kassieren.</p>
+        </div>
+
+        <div class="entry-actions">
+          <button class="btn btn-primary" onclick="enter()">Anmelden</button>
+          <button class="btn btn-ghost" onclick="enter()">Als Gast fortfahren</button>
+          <p class="entry-legal">Mit dem Fortfahren stimmen Sie den <a href="#">Nutzungsbedingungen</a> zu. Infos zum Datenschutz in der <a href="#">Datenschutzerklärung</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ HOME ============================ -->
+    <section class="screen" id="screen-home">
+      <div class="scroll">
+        <div class="topbar">
+          <div class="greet">Guten Tag<b>Willkommen zurück</b></div>
+          <div class="avatar" onclick="showPrefs()">G</div>
+        </div>
+
+        <div class="points-card">
+          <div class="ring"></div>
+          <div class="label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 21s-8-4.9-8-10.6C4 6.9 6.4 5 9 5c1.7 0 3 .9 3 2 0-1.1 1.3-2 3-2 2.6 0 5 1.9 5 5.4C20 16.1 12 21 12 21z"/></svg>
+            Meine Magenta Moments Punkte
+          </div>
+          <div class="val"><span id="points">120</span><small>Punkte</small></div>
+          <div class="foot">Noch 80 Punkte bis zur nächsten Prämie</div>
+        </div>
+
+        <div class="section-h">
+          <h2><span class="heart-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-4.9-8-10.6C4 6.9 6.4 5 9 5c1.7 0 3 .9 3 2 0-1.1 1.3-2 3-2 2.6 0 5 1.9 5 5.4C20 16.1 12 21 12 21z"/></svg></span>Videos ansehen &amp; sammeln</h2>
+          <a href="#">Alle</a>
+        </div>
+
+        <div class="vlist" id="vlist">
+          <!-- card 1 -->
+          <div class="vcard">
+            <div class="vthumb a">
+              <div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E20074"><path d="M8 5v14l11-7z"/></svg></div>
+              <span class="dur">0:30</span>
+            </div>
+            <div class="vbody">
+              <h3>MagentaTV — das Beste am Abend</h3>
+              <p>Entdecken Sie neue Serien-Highlights und sichern Sie sich Punkte.</p>
+              <div class="vrow">
+                <span class="chip">+50 Punkte</span>
+                <button class="earn" onclick="startEarn(this,50)">Ansehen &amp; sammeln</button>
+              </div>
+            </div>
+          </div>
+          <!-- card 2 -->
+          <div class="vcard">
+            <div class="vthumb b">
+              <div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E20074"><path d="M8 5v14l11-7z"/></svg></div>
+              <span class="dur">0:45</span>
+            </div>
+            <div class="vbody">
+              <h3>5G zuhause einrichten</h3>
+              <p>In 45 Sekunden erklärt — plus Extrapunkte für Ihr Konto.</p>
+              <div class="vrow">
+                <span class="chip">+30 Punkte</span>
+                <button class="earn" onclick="startEarn(this,30)">Ansehen &amp; sammeln</button>
+              </div>
+            </div>
+          </div>
+          <!-- card 3 -->
+          <div class="vcard">
+            <div class="vthumb c">
+              <div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E20074"><path d="M8 5v14l11-7z"/></svg></div>
+              <span class="dur">1:00</span>
+            </div>
+            <div class="vbody">
+              <h3>Partnervorteile mit Wolt</h3>
+              <p>So holen Sie Ihr kostenloses Wolt+ über Magenta Moments.</p>
+              <div class="vrow">
+                <span class="chip">+40 Punkte</span>
+                <button class="earn" onclick="startEarn(this,40)">Ansehen &amp; sammeln</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= PREFERENCE CENTER ======================= -->
+    <section class="screen" id="screen-prefs">
+      <div class="scroll">
+        <div class="pc-head">
+          <button class="backbtn" onclick="showHome()">‹ Zurück</button>
+        </div>
+        <div class="pc-title">
+          <h1>Datenschutz &amp; Einwilligungen</h1>
+          <p>Legen Sie fest, wie die Telekom Sie kontaktiert und Ihre Daten nutzt. Änderungen gelten für alle Mein Telekom-Dienste.</p>
+        </div>
+
+        <div class="pc-group">
+          <div class="cap">Kommunikationskanäle</div>
+          <div class="pc-list">
+            <div class="pc-item"><div class="txt"><b>E-Mail</b><span>Angebote &amp; Neuigkeiten per E-Mail</span></div><input type="checkbox" class="sw" checked></div>
+            <div class="pc-item"><div class="txt"><b>SMS</b><span>Aktionen per SMS erhalten</span></div><input type="checkbox" class="sw"></div>
+            <div class="pc-item"><div class="txt"><b>Telefon</b><span>Beratung &amp; Angebote per Anruf</span></div><input type="checkbox" class="sw"></div>
+            <div class="pc-item"><div class="txt"><b>Push</b><span>Mitteilungen in der App</span></div><input type="checkbox" class="sw" checked></div>
+          </div>
+        </div>
+
+        <div class="pc-group">
+          <div class="cap">Zwecke</div>
+          <div class="pc-list">
+            <div class="pc-item locked"><div class="txt"><b>Vertrag &amp; Service</b><span>Notwendig — kann nicht deaktiviert werden</span></div><input type="checkbox" class="sw" checked disabled></div>
+            <div class="pc-item"><div class="txt"><b>Personalisierte Angebote</b><span>Empfehlungen auf Basis Ihrer Nutzung</span></div><input type="checkbox" class="sw" checked></div>
+            <div class="pc-item"><div class="txt"><b>Magenta Moments Prämien</b><span>Videonutzung für Punkte &amp; Prämien auswerten</span></div><input type="checkbox" class="sw" id="pref-rewards"></div>
+            <div class="pc-item"><div class="txt"><b>Marketing durch Partner</b><span>Angebote ausgewählter Partner</span></div><input type="checkbox" class="sw"></div>
+          </div>
+        </div>
+
+        <!-- ONETRUST PREFERENCE CENTER — embed slot -->
+        <div class="pc-embed">
+          <b>◧ OneTrust Preference Center — Einbettungsslot</b>
+          <p>Die obigen Schalter sind die Demo-Oberfläche. Für die Live-Version die gehostete OneTrust Preference Center hier einbetten (iFrame / <code>OneTrust.LoadPreferenceCenter</code>) oder <code>onclick</code> auf <code>OneTrust.ToggleInfoDisplay()</code> setzen.</p>
+        </div>
+
+        <div class="pc-save">
+          <button class="btn btn-primary" style="width:100%" onclick="savePrefs()">Einstellungen speichern</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ TAB BAR ============================ -->
+    <nav class="tabbar hidden" id="tabbar">
+      <button class="tab on" data-tab="home" onclick="showHome()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Start
+      </button>
+      <button class="tab" onclick="stub()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 10h16"/></svg>Tarife
+      </button>
+      <button class="tab" data-tab="moments" onclick="showHome()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-4.9-8-10.6C4 6.9 6.4 5 9 5c1.7 0 3 .9 3 2 0-1.1 1.3-2 3-2 2.6 0 5 1.9 5 5.4C20 16.1 12 21 12 21z"/></svg>Moments
+      </button>
+      <button class="tab" data-tab="profile" onclick="showPrefs()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>Profil
+      </button>
+    </nav>
+
+    <!-- ===== DEMO COOKIE BANNER — preview only. Delete this whole block when the real OneTrust script is added. ===== -->
+    <div class="cookie" id="cookie" role="dialog" aria-label="Cookie-Einwilligung">
+      <h4>🍪 Wir schätzen Ihre Privatsphäre</h4>
+      <p>Wir verwenden Cookies, um die App sicher zu betreiben, Ihre Einstellungen zu speichern und die Nutzung zu verstehen. Details in unserer <a href="#">Cookie-Richtlinie</a>.</p>
+      <div class="ot-row">
+        <button class="btn btn-ghost" onclick="closeCookie()">Alle ablehnen</button>
+        <button class="btn btn-primary" onclick="closeCookie()">Alle akzeptieren</button>
+      </div>
+      <button class="settings" onclick="closeCookie()">Cookie-Einstellungen</button>
+    </div>
+    <!-- ===== end demo cookie banner ===== -->
+
+    <!-- ===== REWARDS CONSENT POPUP (in-app demo modal — NOT OneTrust) ===== -->
+    <div class="scrim" id="scrim" onclick="closeConsent()"></div>
+    <div class="sheet" id="consent" role="dialog" aria-label="Einwilligung Prämien">
+      <div class="grip"></div>
+      <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="#E20074"><path d="M12 21s-8-4.9-8-10.6C4 6.9 6.4 5 9 5c1.7 0 3 .9 3 2 0-1.1 1.3-2 3-2 2.6 0 5 1.9 5 5.4C20 16.1 12 21 12 21z"/></svg></div>
+      <h3>Punkte sammeln — kurz bestätigen</h3>
+      <p class="lead">Um Ihnen für dieses Video Punkte gutzuschreiben, benötigen wir Ihre Einwilligung.</p>
+
+      <div class="consent-line">
+        <input type="checkbox" class="cbx" id="c1" checked>
+        <label for="c1"><b>Videonutzung auswerten</b>Wir erfassen, dass Sie dieses Video angesehen haben, um Punkte gutzuschreiben. <i>(erforderlich)</i></label>
+      </div>
+      <div class="consent-line">
+        <input type="checkbox" class="cbx" id="c2">
+        <label for="c2"><b>Personalisierte Prämien</b>Empfehlungen für Videos &amp; Angebote auf Basis Ihres Sehverhaltens.</label>
+      </div>
+
+      <div class="acts">
+        <button class="btn btn-primary" onclick="confirmConsent()">Zustimmen &amp; Video starten</button>
+        <button class="btn btn-ghost" onclick="closeConsent()">Jetzt nicht</button>
+      </div>
+      <p class="mini">Sie können diese Einwilligung jederzeit unter <b>Datenschutz &amp; Einwilligungen</b> widerrufen.</p>
+    </div>
+
+    <!-- ===== video player (simulated) ===== -->
+    <div class="player" id="player">
+      <div class="pico"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div>
+      <div style="margin-top:16px;font-size:14px;opacity:.8">Video wird abgespielt …</div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+
+    <!-- toast -->
+    <div class="toast" id="toast"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span id="toast-msg">+50 Punkte gutgeschrieben</span></div>
+
+    <div class="home-ind"></div>
+  </div>
+
+  <!-- ================= DEMO CONTROLS ================= -->
+  <div class="controls">
+    <div class="seg" id="theme-seg">
+      <button data-theme-btn="light" class="on" onclick="setTheme('light')">Hell</button>
+      <button data-theme-btn="dark" onclick="setTheme('dark')">Dunkel</button>
+    </div>
+    <button class="ctl-btn" onclick="resetDemo()">↻ Demo zurücksetzen</button>
+  </div>
+  <p class="hint">Ablauf: Cookie-Banner (→ OneTrust) · Als Gast fortfahren · Video „Ansehen &amp; sammeln" löst den In-App-Einwilligungs-Dialog aus (kein OneTrust) · Profil öffnet die Preference Center.</p>
+
+<script>
+  /* ---------- clock ---------- */
+  (function tick(){
+    const d=new Date();
+    document.getElementById('clock').textContent =
+      d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+    setTimeout(tick,10000);
+  })();
+
+  /* ---------- navigation ---------- */
+  function show(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
+    document.getElementById('tabbar').classList.toggle('hidden', id==='screen-entry');
+  }
+  function enter(){ show('screen-home'); setTab('home'); }
+  function showHome(){ show('screen-home'); setTab('home'); }
+  function showPrefs(){ show('screen-prefs'); setTab('profile'); }
+  function stub(){ /* Tarife tab — placeholder for demo */ }
+  function setTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.tab===name));
+  }
+
+  /* ---------- cookie banner (DEMO → OneTrust later) ---------- */
+  function closeCookie(){ document.getElementById('cookie').classList.remove('show'); }
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>document.getElementById('cookie').classList.add('show'), 700);
+  });
+
+  /* When the real OneTrust SDK is wired in, this moves its banner INSIDE the phone.
+     Called from OptanonWrapper() in the head. */
+  window.placeOneTrustInPhone = function(){
+    var b=document.getElementById('onetrust-banner-sdk');
+    var phone=document.getElementById('phone');
+    if(b && phone && b.parentNode!==phone){
+      phone.appendChild(b);
+      b.style.position='absolute'; b.style.left='12px'; b.style.right='12px';
+      b.style.bottom='16px'; b.style.width='auto'; b.style.zIndex='120';
+    }
+  };
+
+  /* ---------- rewards consent popup (in-app, NOT OneTrust) ---------- */
+  let pendingBtn=null, pendingPts=0;
+  function startEarn(btn,pts){
+    pendingBtn=btn; pendingPts=pts;
+    document.getElementById('c2').checked=false;
+    document.getElementById('scrim').classList.add('show');
+    document.getElementById('consent').classList.add('show');
+  }
+  function closeConsent(){
+    document.getElementById('scrim').classList.remove('show');
+    document.getElementById('consent').classList.remove('show');
+  }
+  function confirmConsent(){
+    if(!document.getElementById('c1').checked){ return; } // required
+    // reflect the optional personalization consent into the preference center
+    if(document.getElementById('c2').checked){ document.getElementById('pref-rewards').checked=true; }
+    closeConsent();
+    playVideo();
+  }
+
+  /* ---------- simulated video + points count-up ---------- */
+  function playVideo(){
+    const p=document.getElementById('player'), bar=document.getElementById('pbar');
+    p.classList.add('show'); bar.style.width='0';
+    let w=0; const iv=setInterval(()=>{
+      w+=4; bar.style.width=w+'%';
+      if(w>=100){ clearInterval(iv); p.classList.remove('show'); creditPoints(); }
+    },70);
+  }
+  function creditPoints(){
+    const el=document.getElementById('points');
+    let cur=parseInt(el.textContent,10); const target=cur+pendingPts;
+    const step=Math.max(1,Math.round(pendingPts/25));
+    const iv=setInterval(()=>{
+      cur+=step; if(cur>=target){cur=target; clearInterval(iv);}
+      el.textContent=cur;
+    },30);
+    // mark the card as done
+    if(pendingBtn){
+      pendingBtn.disabled=true; pendingBtn.textContent='Gesammelt ✓';
+      const chip=pendingBtn.closest('.vrow').querySelector('.chip');
+      chip.classList.add('done');
+    }
+    toast('+'+pendingPts+' Punkte gutgeschrieben');
+  }
+  function toast(msg){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  function savePrefs(){ toast('Einstellungen gespeichert'); setTimeout(showHome,600); }
+
+  /* ---------- theme ---------- */
+  function setTheme(mode){
+    document.documentElement.setAttribute('data-theme',mode);
+    document.querySelectorAll('#theme-seg button').forEach(b=>b.classList.toggle('on', b.dataset.themeBtn===mode));
+  }
+
+  /* ---------- reset ---------- */
+  function resetDemo(){
+    show('screen-entry');
+    document.getElementById('points').textContent='120';
+    document.querySelectorAll('.earn').forEach(b=>{b.disabled=false; b.textContent='Ansehen & sammeln';});
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('done'));
+    setTimeout(()=>document.getElementById('cookie').classList.add('show'),400);
+  }
+</script>
+</body>
+</html>
+OneTrust.com 
+Pl. Pablo Ruiz Picasso 11, 28020 Madrid, Spain 
